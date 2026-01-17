@@ -46,6 +46,16 @@ import {
   faVideo,
   faTrash,
   faPenToSquare,
+  faShieldHalved,
+  faTable,
+  faTableList,
+  faCheck,
+  faXmark,
+  faCircleCheck,
+  faCircleXmark
+  
+  
+  
   
 
 } from '@fortawesome/free-solid-svg-icons'
@@ -87,6 +97,13 @@ library.add(
   faVideo,
   faTrash,
   faPenToSquare,
+  faShieldHalved,
+  faTable,
+  faTableList,
+  faCheck,
+  faXmark,
+  faCircleCheck,
+  faCircleXmark
 )
 
 const app = createApp(App)
