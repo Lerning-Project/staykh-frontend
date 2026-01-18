@@ -29,59 +29,58 @@ import MediaCard from '@/components/cards/MediaCard.vue'
         />
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      <MediaCard
-        image="https://picsum.photos/600/400"
-        type="image"
-        name="resort-cover.jpg"
-        size="2.4 MB"
-        updatedAt="2026-01-14"
-        usedIn="Angkor Paradise Resort"
-        @preview="openPreview"
-        @delete="deleteMedia"
-      />
-      <MediaCard
-        image="https://picsum.photos/600/400"
-        type="image"
-        name="resort-cover.jpg"
-        size="2.4 MB"
-        updatedAt="2026-01-14"
-        usedIn="Angkor Paradise Resort"
-        @preview="openPreview"
-        @delete="deleteMedia"
-      />
-      <MediaCard
-        image="https://picsum.photos/600/400"
-        type="image"
-        name="resort-cover.jpg"
-        size="2.4 MB"
-        updatedAt="2026-01-14"
-        usedIn="Angkor Paradise Resort"
-        @preview="openPreview"
-        @delete="deleteMedia"
-      />
-      <MediaCard
-        image="https://picsum.photos/600/400"
-        type="image"
-        name="resort-cover.jpg"
-        size="2.4 MB"
-        updatedAt="2026-01-14"
-        usedIn="Angkor Paradise Resort"
-        @preview="openPreview"
-        @delete="deleteMedia"
-      />
-      <MediaCard
-        image="https://picsum.photos/600/400"
-        type="image"
-        name="resort-cover.jpg"
-        size="2.4 MB"
-        updatedAt="2026-01-14"
-        usedIn="Angkor Paradise Resort"
-        @preview="openPreview"
-        @delete="deleteMedia"
-      />
+        <MediaCard
+          image="https://picsum.photos/600/400"
+          type="image"
+          name="resort-cover.jpg"
+          size="2.4 MB"
+          updatedAt="2026-01-14"
+          usedIn="Angkor Paradise Resort"
+          @preview="openPreview"
+          @delete="deleteMedia"
+        />
+        <MediaCard
+          image="https://picsum.photos/600/400"
+          type="image"
+          name="resort-cover.jpg"
+          size="2.4 MB"
+          updatedAt="2026-01-14"
+          usedIn="Angkor Paradise Resort"
+          @preview="openPreview"
+          @delete="deleteMedia"
+        />
+        <MediaCard
+          image="https://picsum.photos/600/400"
+          type="image"
+          name="resort-cover.jpg"
+          size="2.4 MB"
+          updatedAt="2026-01-14"
+          usedIn="Angkor Paradise Resort"
+          @preview="openPreview"
+          @delete="deleteMedia"
+        />
+        <MediaCard
+          image="https://picsum.photos/600/400"
+          type="image"
+          name="resort-cover.jpg"
+          size="2.4 MB"
+          updatedAt="2026-01-14"
+          usedIn="Angkor Paradise Resort"
+          @preview="openPreview"
+          @delete="deleteMedia"
+        />
+        <MediaCard
+          image="https://picsum.photos/600/400"
+          type="image"
+          name="resort-cover.jpg"
+          size="2.4 MB"
+          updatedAt="2026-01-14"
+          usedIn="Angkor Paradise Resort"
+          @preview="openPreview"
+          @delete="deleteMedia"
+        />
+      </div>
     </div>
-    </div>
-    
   </div>
 </template>
 

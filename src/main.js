@@ -52,7 +52,9 @@ import {
   faCheck,
   faXmark,
   faCircleCheck,
-  faCircleXmark
+  faCircleXmark,
+  faCalendar,
+
   
   
   
@@ -103,7 +105,8 @@ library.add(
   faCheck,
   faXmark,
   faCircleCheck,
-  faCircleXmark
+  faCircleXmark,
+  faCalendar,
 )
 
 const app = createApp(App)
