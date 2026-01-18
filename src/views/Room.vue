@@ -1,10 +1,21 @@
 <script setup>
+import { ref } from 'vue'
 import Paragraph from '@/components/Paragraph.vue'
 import Search from '@/components/Search.vue'
 import Filter from '@/components/Filter.vue'
 import RoomVarietyTable from '@/components/tables/RoomVarietyTable.vue'
+import AddRoomVariety from '@/components/addnew/AddRoomVariety.vue'
 
-const rooms = [
+// Dialog
+const showAddForm = ref(false)
+
+// Filters
+const selectedProvince = ref('all')
+const selectedPrice = ref('all')
+const selectedStatus = ref('all')
+
+// Rooms array
+const rooms = ref([
   {
     id: 1,
     roomName: 'Deluxe Room',
@@ -13,7 +24,7 @@ const rooms = [
     price: 120,
     capacity: 3,
     status: 'available',
-    bookings: 125
+    bookings: 125,
   },
   {
     id: 2,
@@ -23,7 +34,7 @@ const rooms = [
     price: 250,
     capacity: 4,
     status: 'disabled',
-    bookings: 250
+    bookings: 250,
   },
   {
     id: 3,
@@ -33,7 +44,7 @@ const rooms = [
     price: 150,
     capacity: 2,
     status: 'available',
-    bookings: 150
+    bookings: 150,
   },
   {
     id: 4,
@@ -43,7 +54,7 @@ const rooms = [
     price: 300,
     capacity: 5,
     status: 'disabled',
-    bookings: 300
+    bookings: 300,
   },
   {
     id: 5,
@@ -53,21 +64,56 @@ const rooms = [
     price: 200,
     capacity: 3,
     status: 'available',
-    bookings: 200
-  }
-]
+    bookings: 200,
+  },
+])
+
+// Handlers
+const handleAddRoom = (newRoom) => {
+  rooms.value.push({
+    id: Date.now(),
+    ...newRoom,
+  })
+}
+
+const viewRoom = (room) => {
+  console.log('Viewing room:', room)
+}
+
+const editRoom = (room) => {
+  console.log('Editing room:', room)
+}
+
+const suspendRoom = (room) => {
+  console.log('Suspending room:', room)
+}
 </script>
 
 <template>
   <div>
     <TitleContent text="Rooms Variety Management" :level="4" :weight="'bold'" />
-    <div class="mb-5">
+    <div class="flex justify-between items-center">
       <Paragraph
-        text="Manage all rooms types across the properties"
+        class="mb-5"
+        text="Manage all room varieties across the platform"
         :level="6"
         :weight="'normal'"
       />
+
+      <!-- Add button -->
+      <div class="flex justify-end items-center">
+        <button
+          @click="showAddForm = true"
+          class="rounded-lg bg-blue-600 px-4 py-2 text-md font-medium text-white hover:bg-blue-700"
+        >
+          + Add Room
+        </button>
+      </div>
     </div>
+
+    <!-- Dialog -->
+    <AddRoomVariety v-model="showAddForm" @submit="handleAddRoom" />
+
     <div class="flex gap-5 flex-col">
       <div class="w-full border bg-white p-5 rounded-lg border-gray-200 flex gap-5 justify-between">
         <Search placeholder="Search resorts, users, bookings..." />
@@ -111,12 +157,7 @@ const rooms = [
           />
         </div>
       </div>
-      <RoomVarietyTable
-        :rooms="rooms"
-        @view="viewRoom"
-        @edit="editRoom"
-        @suspend="suspendRoom"
-      />
+      <RoomVarietyTable :rooms="rooms" @view="viewRoom" @edit="editRoom" @suspend="suspendRoom" />
     </div>
   </div>
 </template>

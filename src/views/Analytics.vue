@@ -102,7 +102,7 @@ const mostBookedRoomsData = [
     <TitleContent text="Report & Analytics" :level="4" :weight="'bold'" />
 
     <Paragraph
-      class="mt-3"
+      class="mb-5"
       text="Generate reports and analyze platform performance"
       :level="6"
       :weight="'normal'"
