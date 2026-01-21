@@ -1,9 +1,12 @@
 <script setup>
 import { icon } from '@fortawesome/fontawesome-svg-core'
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
 
 const menuItems = [
   { name: 'Dashboard Overview', path: '/', icon: 'house' },
@@ -23,6 +26,11 @@ const menuItems = [
 const isActive = (path) => {
   return route.path === path
 }
+
+const handleLogout = () => {
+  authStore.logout()
+  router.push('/login')
+}
 </script>
 
 <template>
@@ -35,7 +43,9 @@ const isActive = (path) => {
         </div>
         <div>
           <h1 class="text-xl text-gray-700 font-bold">StayKH</h1>
-          <p class="text-xs text-gray-500">Super Admin</p>
+          <p class="text-xs text-gray-500">
+            {{ authStore.user?.role === 'super_admin' ? 'Super Admin' : 'POS Staff' }}
+          </p>
         </div>
       </div>
     </div>
@@ -60,7 +70,29 @@ const isActive = (path) => {
       </ul>
     </nav>
 
-    <!-- User Profile Section -->
+    <!-- User Profile & Logout Section -->
+    <div class="p-4 border-t border-gray-200">
+      <!-- <div class="bg-gray-50 rounded-lg p-3 mb-3">
+        <div class="flex items-center gap-3 mb-2">
+          <div
+            class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center shrink-0"
+          >
+            <font-awesome-icon icon="user" class="text-white" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-sm text-gray-800 truncate">{{ authStore.user?.name }}</p>
+            <p class="text-xs text-gray-500 truncate">{{ authStore.user?.email }}</p>
+          </div>
+        </div>
+      </div> -->
+      <button
+        @click="handleLogout"
+        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors font-medium"
+      >
+        <font-awesome-icon icon="right-from-bracket" />
+        <span>Logout</span>
+      </button>
+    </div>
   </aside>
 </template>
 

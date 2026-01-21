@@ -54,11 +54,10 @@ import {
   faCircleCheck,
   faCircleXmark,
   faCalendar,
-
-  
-  
-  
-  
+  faRightFromBracket,
+  faBed,
+  faDollar,
+  faComment,
 
 } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons'
@@ -107,6 +106,11 @@ library.add(
   faCircleCheck,
   faCircleXmark,
   faCalendar,
+  faRightFromBracket,
+  faBed,
+  faDollar,
+  faComment,
+  
 )
 
 const app = createApp(App)

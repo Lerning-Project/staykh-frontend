@@ -1,8 +1,10 @@
 <script setup>
 import { RouterView, useRoute } from 'vue-router'
 import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
+const authStore = useAuthStore()
 
 const pageTitle = computed(() => {
   const name = route.name || 'Dashboard'
@@ -11,7 +13,7 @@ const pageTitle = computed(() => {
 </script>
 
 <template>
-  <main class="flex-1 flex flex-col overflow-hidden ">
+  <main class="flex-1 flex flex-col overflow-hidden">
     <!-- Header -->
     <header class="bg-white border-b border-gray-200">
       <div class="px-8 py-2">
@@ -22,9 +24,9 @@ const pageTitle = computed(() => {
           </div> -->
 
           <!-- Right Side: Search, Notifications, User Profile -->
-          <div class="flex items-center justify-between gap-4 w-full ">
+          <div class="flex items-center justify-between gap-4 w-full">
             <!-- Search Bar -->
-            <div class="relative ">
+            <div class="relative">
               <input
                 type="text"
                 placeholder="Search resorts, users, bookings..."
@@ -37,28 +39,32 @@ const pageTitle = computed(() => {
             </div>
 
             <div class="flex items-center gap-2">
-                <!-- Notifications -->
-            <button
-              class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <font-awesome-icon icon="bell" class="text-xl" />
-              <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-
-            <!-- User Profile -->
-            <div
-              class="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
-            >
-              <div class="text-right">
-                <p class="font-semibold text-sm text-gray-800">Admin User</p>
-                <p class="text-xs text-gray-500">admin@staykh.com</p>
-              </div>
-              <div
-                class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center shrink-0"
+              <!-- Notifications -->
+              <button
+                class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <font-awesome-icon icon="user" class="text-white" />
+                <font-awesome-icon icon="bell" class="text-xl" />
+                <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              </button>
+
+              <!-- User Profile -->
+              <div
+                class="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
+              >
+                <div class="text-right">
+                  <p class="font-semibold text-sm text-gray-800">
+                    {{ authStore.user?.name || 'User' }}
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    {{ authStore.user?.email || 'user@staykh.com' }}
+                  </p>
+                </div>
+                <div
+                  class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center shrink-0"
+                >
+                  <font-awesome-icon icon="user" class="text-white" />
+                </div>
               </div>
-            </div>
             </div>
           </div>
         </div>
