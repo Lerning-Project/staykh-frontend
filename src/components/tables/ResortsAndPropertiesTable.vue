@@ -2,48 +2,40 @@
 const props = defineProps({
   resorts: {
     type: Array,
-    required: true
-    /*
-      format:
-      {
-        id: 1,
-        name: 'Angkor Paradise Resort',
-        province: 'Siem Reap',
-        status: 'active' | 'suspended',
-        totalRooms: 120,
-        totalBookings: 3560,
-        revenue: 125000
-      }
-    */
-  }
+    required: true,
+    default: () => [],
+  },
 })
+
+const emit = defineEmits(['view', 'edit', 'suspend'])
 
 const statusConfig = {
   active: {
     label: 'Active',
-    color: 'bg-green-100 text-green-700'
+    color: 'bg-green-100 text-green-700',
   },
   suspended: {
     label: 'Suspended',
-    color: 'bg-red-100 text-red-700'
-  }
+    color: 'bg-red-100 text-red-700',
+  },
 }
 
-const emit = defineEmits(['view', 'edit', 'suspend'])
+/* ---------- helpers ---------- */
+const safeText = (value) => {
+  return value ? value : '-'
+}
+
+const safeNumber = (value) => {
+  return typeof value === 'number' ? value : 0
+}
+
+const safeStatus = (status) => {
+  return statusConfig[status] ? status : 'suspended'
+}
 </script>
 
 <template>
   <div class="rounded-xl border border-gray-200 bg-white">
-    <!-- Header -->
-    <!-- <div class="border-b border-gray-200 px-6 py-4">
-      <h2 class="text-xl font-semibold text-gray-800">
-        Resort & Properties Management
-      </h2>
-      <p class="text-sm text-gray-400">
-        Manage all resorts and properties across the platform
-      </p>
-    </div> -->
-
     <!-- Table -->
     <div class="overflow-x-auto rounded-xl">
       <table class="w-full border-collapse">
@@ -64,44 +56,44 @@ const emit = defineEmits(['view', 'edit', 'suspend'])
         <tbody>
           <tr
             v-for="resort in resorts"
-            :key="resort.id"
+            :key="resort?.id ?? Math.random()"
             class="border-t border-gray-200 hover:bg-gray-50 transition"
           >
             <!-- Name -->
             <td class="px-6 py-4 text-sm font-medium text-gray-800">
-              {{ resort.name }}
+              {{ safeText(resort?.name) }}
             </td>
 
             <!-- Province -->
             <td class="px-6 py-4 text-sm text-gray-600">
-              {{ resort.province }}
+              {{ safeText(resort?.province) }}
             </td>
 
             <!-- Status -->
             <td class="px-6 py-4">
               <span
                 class="rounded-full px-2 py-1 text-xs font-medium"
-                :class="statusConfig[resort.status].color"
+                :class="statusConfig[safeStatus(resort?.status)].color"
               >
-                {{ statusConfig[resort.status].label }}
+                {{ statusConfig[safeStatus(resort?.status)].label }}
               </span>
             </td>
 
             <!-- Rooms -->
             <td class="px-6 py-4 text-right text-sm text-gray-700">
-              {{ resort.totalRooms.toLocaleString() }}
+              {{ safeNumber(resort?.totalRooms).toLocaleString() }}
             </td>
 
             <!-- Bookings -->
             <td class="px-6 py-4 text-right text-sm text-gray-700">
-                <!-- icon -->
-                <font-awesome-icon icon="calendar-check" />
-              {{ resort.totalBookings.toLocaleString() }}
+              <font-awesome-icon icon="calendar-check" class="mr-1" />
+              {{ safeNumber(resort?.totalBookings).toLocaleString() }}
             </td>
 
             <!-- Revenue -->
             <td class="px-6 py-4 text-right text-sm font-medium text-gray-800">
-              ${{ resort.revenue.toLocaleString() }}
+              $
+              {{ safeNumber(resort?.revenue).toLocaleString() }}
             </td>
 
             <!-- Actions -->
@@ -109,7 +101,7 @@ const emit = defineEmits(['view', 'edit', 'suspend'])
               <div class="flex justify-center gap-3">
                 <!-- View -->
                 <button
-                  @click="$emit('view', resort)"
+                  @click="emit('view', resort)"
                   class="text-blue-600 hover:text-blue-800"
                   title="View Details"
                 >
@@ -118,7 +110,7 @@ const emit = defineEmits(['view', 'edit', 'suspend'])
 
                 <!-- Edit -->
                 <button
-                  @click="$emit('edit', resort)"
+                  @click="emit('edit', resort)"
                   class="text-gray-600 hover:text-gray-800"
                   title="Edit Resort"
                 >
@@ -127,7 +119,7 @@ const emit = defineEmits(['view', 'edit', 'suspend'])
 
                 <!-- Suspend -->
                 <button
-                  @click="$emit('suspend', resort)"
+                  @click="emit('suspend', resort)"
                   class="text-red-600 hover:text-red-800"
                   title="Suspend Resort"
                 >
@@ -138,7 +130,7 @@ const emit = defineEmits(['view', 'edit', 'suspend'])
           </tr>
 
           <!-- Empty -->
-          <tr v-if="resorts.length === 0">
+          <tr v-if="!resorts || resorts.length === 0">
             <td
               colspan="7"
               class="px-6 py-12 text-center text-sm text-gray-400"

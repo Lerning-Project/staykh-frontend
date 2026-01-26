@@ -6,14 +6,14 @@ import Content from './layouts/Content.vue'
 
 const route = useRoute()
 
-// Check if current route is an auth page (login/register) or POS page
+// Check if current route is an auth page or POS page
 const isFullScreenPage = computed(() => {
-  return route.path === '/login' || route.path === '/register' || route.path === '/pos'
+  return route.path === '/activate' || route.path === '/confirm-otp' || route.path === '/pos'
 })
 </script>
 
 <template>
-  <!-- Full screen pages (login/register/pos) - without admin sidebar -->
+  <!-- Full screen pages (auth/pos) - without admin sidebar -->
   <div v-if="isFullScreenPage" class="h-screen bg-gray-50">
     <RouterView />
   </div>

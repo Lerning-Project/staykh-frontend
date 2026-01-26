@@ -1,30 +1,15 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import Cookies from 'universal-cookie'
+import { authAPI } from '@/services/api'
+
+const cookies = new Cookies()
 
 export const useAuthStore = defineStore('auth', () => {
   // State
   const user = ref(null)
   const isAuthenticated = ref(false)
-
-  // Fake users database (stored in code, credentials checked against this)
-  const fakeUsers = [
-    {
-      id: 1,
-      email: 'admin@staykh.com',
-      password: 'admin123',
-      role: 'super_admin',
-      name: 'Super Admin',
-      phone: '012345678'
-    },
-    {
-      id: 2,
-      email: 'pos@staykh.com',
-      password: 'pos123',
-      role: 'pos_staff',
-      name: 'POS Staff',
-      phone: '012345679'
-    }
-  ]
+  const token = ref(null)
 
   // Getters
   const isSuperAdmin = computed(() => {
@@ -36,52 +21,128 @@ export const useAuthStore = defineStore('auth', () => {
   })
 
   // Actions
-  function login(email, password) {
-    // Find user in fake database
-    const foundUser = fakeUsers.find(
-      u => u.email === email && u.password === password
-    )
-
-    if (!foundUser) {
-      throw new Error('Invalid email or password')
+  
+  /**
+   * Activate account and request OTP
+   * @param {string} telephone - Phone number
+   * @param {string} firstName - First name
+   * @param {string} lastName - Last name
+   * @returns {Promise} API response
+   */
+  async function activate(telephone, firstName, lastName) {
+    try {
+      const response = await authAPI.activate(telephone, firstName, lastName)
+      // Store telephone for OTP confirmation step
+      sessionStorage.setItem('staykh_pending_telephone', telephone)
+      return response.data
+    } catch (error) {
+      throw error
     }
-
-    // Store user data (without password)
-    const userData = {
-      id: foundUser.id,
-      email: foundUser.email,
-      role: foundUser.role,
-      name: foundUser.name,
-      phone: foundUser.phone
-    }
-
-    user.value = userData
-    isAuthenticated.value = true
-
-    // Save to localStorage
-    localStorage.setItem('staykh_user', JSON.stringify(userData))
-    localStorage.setItem('staykh_auth', 'true')
-
-    return userData
   }
 
+  /**
+   * Confirm OTP and authenticate user
+   * @param {string} telephone - Phone number
+   * @param {string} otp - OTP code
+   * @returns {Promise} User data
+   */
+  async function confirmOTP(telephone, otp) {
+    try {
+      const response = await authAPI.confirmOTP(telephone, otp)
+      
+      // Extract tokens from response
+      // Response structure: { status, message, data: { accessToken, refreshToken } }
+      const { accessToken, refreshToken } = response.data.data
+      
+      // Create user data object with super_admin role
+      const userData = {
+        telephone: telephone,
+        role: 'super_admin', // Set to super_admin as API doesn't return role
+        name: 'Admin User', // You can update this later if needed
+      }
+      
+      // Store access token in cookie
+      cookies.set('staykh_token', accessToken, {
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+        sameSite: 'lax',
+      })
+      
+      // Store refresh token in cookie
+      cookies.set('staykh_refresh_token', refreshToken, {
+        path: '/',
+        maxAge: 90 * 24 * 60 * 60, // 90 days (longer than access token)
+        sameSite: 'lax',
+      })
+      
+      // Store user data in cookie
+      cookies.set('staykh_user', JSON.stringify(userData), {
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+        sameSite: 'lax',
+      })
+      
+      // Update state
+      token.value = accessToken
+      user.value = userData
+      isAuthenticated.value = true
+      
+      // Clear pending telephone
+      sessionStorage.removeItem('staykh_pending_telephone')
+      
+      return userData
+    } catch (error) {
+      throw error
+    }
+  }
+
+  /**
+   * Resend OTP
+   * @param {string} telephone - Phone number
+   * @returns {Promise} API response
+   */
+  async function resendOTP(telephone) {
+    try {
+      const response = await authAPI.resendOTP(telephone)
+      return response.data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  /**
+   * Logout user
+   */
   function logout() {
     user.value = null
+    token.value = null
     isAuthenticated.value = false
-    localStorage.removeItem('staykh_user')
-    localStorage.removeItem('staykh_auth')
+    
+    // Clear cookies
+    cookies.remove('staykh_token', { path: '/' })
+    cookies.remove('staykh_user', { path: '/' })
+    
+    // Clear session storage
+    sessionStorage.removeItem('staykh_pending_telephone')
   }
 
+  /**
+   * Check authentication status on app load
+   * @returns {boolean} Authentication status
+   */
   function checkAuth() {
-    // Check localStorage on app load
-    const storedUser = localStorage.getItem('staykh_user')
-    const storedAuth = localStorage.getItem('staykh_auth')
+    const storedToken = cookies.get('staykh_token')
+    const storedUser = cookies.get('staykh_user')
 
-    if (storedUser && storedAuth === 'true') {
+    if (storedToken && storedUser) {
       try {
-        const userData = JSON.parse(storedUser)
+        const userData = typeof storedUser === 'string' 
+          ? JSON.parse(storedUser) 
+          : storedUser
+        
         // Verify the user has a valid role
         if (userData.role === 'super_admin' || userData.role === 'pos_staff') {
+          token.value = storedToken
           user.value = userData
           isAuthenticated.value = true
           return true
@@ -100,10 +161,13 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     user,
+    token,
     isAuthenticated,
     isSuperAdmin,
     isPosStaff,
-    login,
+    activate,
+    confirmOTP,
+    resendOTP,
     logout,
     checkAuth
   }

@@ -12,8 +12,8 @@ import Media from '../views/Media.vue'
 import Roles from '../views/Roles.vue'
 import Analytics from '../views/Analytics.vue'
 import Settings from '../views/Settings.vue'
-import Login from '../views/auth/Login.vue'
-import Register from '../views/auth/Register.vue'
+import Activate from '../views/auth/Activate.vue'
+import ConfirmOTP from '../views/auth/ConfirmOTP.vue'
 import POSView from '../views/pos/POSView.vue'
 
 const router = createRouter({
@@ -98,15 +98,15 @@ const router = createRouter({
       meta: { requiresAuth: true, requiresRole: 'super_admin' }
     },
     {
-      path: '/login',
-      name: 'login',
-      component: Login,
+      path: '/activate',
+      name: 'activate',
+      component: Activate,
       meta: { requiresGuest: true }
     },
     {
-      path: '/register',
-      name: 'register',
-      component: Register,
+      path: '/confirm-otp',
+      name: 'confirm-otp',
+      component: ConfirmOTP,
       meta: { requiresGuest: true }
     }
   ],
@@ -126,8 +126,8 @@ router.beforeEach((to, from, next) => {
   const requiresRole = to.meta.requiresRole
 
   if (requiresAuth && !isAuthenticated) {
-    // Redirect to login if trying to access protected route
-    next('/login')
+    // Redirect to activate if trying to access protected route
+    next('/activate')
   } else if (requiresGuest && isAuthenticated) {
     // Redirect based on user role when already logged in
     if (userRole === 'super_admin') {
@@ -144,7 +144,7 @@ router.beforeEach((to, from, next) => {
     } else if (userRole === 'pos_staff') {
       next('/pos')
     } else {
-      next('/login')
+      next('/activate')
     }
   } else {
     next()

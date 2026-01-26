@@ -58,7 +58,12 @@ import {
   faBed,
   faDollar,
   faComment,
-
+  faPhone,
+  faMobileScreen,
+  faSpinner,
+  faCircleExclamation,
+  faInfoCircle,
+  faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons'
 import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons'
 import { faGithub, faTwitter } from '@fortawesome/free-brands-svg-icons'
@@ -110,7 +115,12 @@ library.add(
   faBed,
   faDollar,
   faComment,
-  
+  faPhone,
+  faMobileScreen,
+  faSpinner,
+  faCircleExclamation,
+  faInfoCircle,
+  faArrowLeft,
 )
 
 const app = createApp(App)

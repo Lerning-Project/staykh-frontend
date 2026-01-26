@@ -3,36 +3,27 @@ const props = defineProps({
   provinces: {
     type: Array,
     required: true,
-    /*
-      format:
-      {
-        id: 1,
-        name: 'Phnom Penh',
-        code: 'PP',
-        resorts: 125,
-        bookings: 4520,
-        revenue: 235000,
-        visible: true
-      }
-    */
+    default: () => [],
   },
 })
 
 const emit = defineEmits(['view', 'edit', 'toggle'])
+
+const safeNumber = (value) => {
+  return typeof value === 'number' ? value : 0
+}
+
+const safeText = (value) => {
+  return value ? value : '-'
+}
+
+const isVisible = (value) => {
+  return value === true
+}
 </script>
 
 <template>
   <div class="rounded-xl border border-gray-200 bg-white">
-    <!-- Header -->
-    <!-- <div class="border-b border-gray-200 px-6 py-4">
-      <h2 class="text-xl font-semibold text-gray-800">
-        Province Management
-      </h2>
-      <p class="text-sm text-gray-400">
-        Manage provinces and regional distribution across Cambodia
-      </p>
-    </div> -->
-
     <!-- Table -->
     <div class="overflow-x-auto">
       <table class="w-full border-collapse">
@@ -53,13 +44,13 @@ const emit = defineEmits(['view', 'edit', 'toggle'])
         <tbody>
           <tr
             v-for="province in provinces"
-            :key="province.id"
+            :key="province?.id ?? Math.random()"
             class="border-t border-gray-200 hover:bg-gray-50 transition"
           >
             <!-- Province Name -->
-            <td class="px-6 py-4 text-sm font-semibold text-gray-800">
-              <font-awesome-icon icon="location-dot" class=" text-blue-500" />
-              {{ province.name }}
+            <td class="px-6 py-4 text-sm font-semibold text-gray-800 flex items-center gap-2">
+              <font-awesome-icon icon="location-dot" class="text-blue-500" />
+              {{ safeText(province?.name) }}
             </td>
 
             <!-- Code -->
@@ -67,31 +58,32 @@ const emit = defineEmits(['view', 'edit', 'toggle'])
               <span
                 class="inline-flex items-center justify-center rounded-md bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-600"
               >
-                {{ province.code }}
+                {{ safeText(province?.code) }}
               </span>
             </td>
 
             <!-- Resorts -->
             <td class="px-6 py-4 text-right text-sm text-gray-700">
-              <font-awesome-icon icon="landmark" />
-              {{ province.resorts.toLocaleString() }}
+              <font-awesome-icon icon="landmark" class="mr-1" />
+              {{ safeNumber(province?.resorts).toLocaleString() }}
             </td>
 
             <!-- Bookings -->
             <td class="px-6 py-4 text-right text-sm text-gray-700">
-              <font-awesome-icon icon="calendar-check" />
-              {{ province.bookings.toLocaleString() }}
+              <font-awesome-icon icon="calendar-check" class="mr-1" />
+              {{ safeNumber(province?.bookings).toLocaleString() }}
             </td>
 
             <!-- Revenue -->
             <td class="px-6 py-4 text-right text-sm font-medium text-gray-800">
-              ${{ province.revenue.toLocaleString() }}
+              $
+              {{ safeNumber(province?.revenue).toLocaleString() }}
             </td>
 
             <!-- Visibility -->
             <td class="px-6 py-4 text-center">
               <span
-                v-if="province.visible"
+                v-if="isVisible(province?.visible)"
                 class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700"
               >
                 Visible
@@ -106,11 +98,11 @@ const emit = defineEmits(['view', 'edit', 'toggle'])
             </td>
 
             <!-- Actions -->
-            <td class="px-6 py-4 text-center rounded-lg">
+            <td class="px-6 py-4 text-center">
               <div class="flex justify-center gap-3">
                 <!-- View -->
                 <button
-                  @click="$emit('view', province)"
+                  @click="emit('view', province)"
                   class="text-blue-600 hover:text-blue-800"
                   title="View Details"
                 >
@@ -119,27 +111,25 @@ const emit = defineEmits(['view', 'edit', 'toggle'])
 
                 <!-- Edit -->
                 <button
-                  @click="$emit('edit', province)"
+                  @click="emit('edit', province)"
                   class="text-gray-600 hover:text-gray-800"
                   title="Edit Province"
                 >
                   <font-awesome-icon icon="pen" />
                 </button>
 
-                <!-- Toggle Visibility -->
+                <!-- Toggle -->
                 <button
-                  @click="$emit('toggle', province)"
-                  class="flex items-center justify-center transition hover:scale-110"
-                  :title="province.visible ? 'Hide Province' : 'Show Province'"
+                  @click="emit('toggle', province)"
+                  :title="isVisible(province?.visible) ? 'Hide Province' : 'Show Province'"
                 >
                   <font-awesome-icon
-                    :icon="province.visible ? 'eye' : 'eye-slash'"
+                    :icon="isVisible(province?.visible) ? 'eye' : 'eye-slash'"
                     :class="
-                      province.visible
+                      isVisible(province?.visible)
                         ? 'text-green-600 hover:text-green-800'
                         : 'text-gray-400 hover:text-gray-600'
                     "
-                    class="text-lg"
                   />
                 </button>
               </div>
@@ -147,7 +137,7 @@ const emit = defineEmits(['view', 'edit', 'toggle'])
           </tr>
 
           <!-- Empty -->
-          <tr v-if="provinces.length === 0">
+          <tr v-if="!provinces || provinces.length === 0">
             <td colspan="7" class="px-6 py-12 text-center text-sm text-gray-400">
               No provinces found
             </td>
